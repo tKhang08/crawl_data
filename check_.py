@@ -4,6 +4,7 @@ import pandas as pd
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from selenium import webdriver
+
 # Hàm crawl dữ liệu cho tất cả các nhà hàng trên một trang
 def crawl_restaurants_on_page(url):
     response = requests.get(url)
@@ -40,9 +41,10 @@ def crawl_restaurants_on_page(url):
 
     return restaurants_data
 
+
 # Crawl dữ liệu từ trang web
-url = 'https://www.foody.vn/'
-restaurants_data = crawl_restaurants_on_page(url)
+
+restaurants_data = crawl_restaurants_on_page('https://www.foody.vn/')
 
 # Chuyển dữ liệu thành DataFrame Pandas
 df = pd.DataFrame(restaurants_data, columns=['Rating', 'Name', 'Address'])

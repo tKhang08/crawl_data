@@ -147,7 +147,7 @@ login('https://www.foody.vn/',"trantrongkhang0941@gmail.com", "0833030679")
 all_data = []
 i = 0
 max_attempts = 3
-max_pages = 200  # Số trang tối đa bạn muốn crawl
+max_pages = 10  # Số trang tối đa bạn muốn crawl
 while i < max_pages:
     close_popups()
     
