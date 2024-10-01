@@ -1,0 +1,62 @@
+import wikipediaapi
+import time
+from datetime import datetime
+
+def crawl_wikipedia(seed_topics, max_pages=1000):
+    # Tạo một User-Agent hợp lệ
+    user_agent = "MyWikiBot/1.0 (https://example.com/; email@example.com)"
+    
+    # Khởi tạo Wikipedia API với User-Agent
+    wiki = wikipediaapi.Wikipedia(
+        language='en',
+        extract_format=wikipediaapi.ExtractFormat.WIKI,
+        user_agent=user_agent
+    )
+
+    data = {}
+    visited = set()
+    to_visit = seed_topics.copy()
+
+    while to_visit and len(data) < max_pages:
+        topic = to_visit.pop(0)
+        if topic in visited:
+            continue
+
+        page = wiki.page(topic)
+        if not page.exists():
+            continue
+
+        # Lấy thời gian hiện tại
+        current_time = datetime.now()
+
+        # Lưu nội dung trang và timestamp
+        data[topic] = {
+            'title': page.title,
+            'summary': page.summary,
+            'content': page.text,
+            'url': page.fullurl,
+            'crawl_timestamp': current_time.isoformat()
+        }
+
+        visited.add(topic)
+
+        # Thêm các liên kết vào danh sách cần visit
+        for link in page.links:
+            if link not in visited and link not in to_visit:
+                to_visit.append(link)
+
+        print(f"Crawled: {topic} at {current_time}")
+        time.sleep(1)  # Tránh gửi quá nhiều requests
+
+    return data
+
+# Sử dụng
+seed_topics = ['Python (programming language)', 'Artificial intelligence', 'Machine learning']
+wiki_data = crawl_wikipedia(seed_topics)
+
+import json
+
+# Lưu vào file JSON
+with open('wikipedia_data.json', 'w', encoding='utf-8') as f:
+    json.dump(wiki_data, f, ensure_ascii=False, indent=4, default=str)
+
